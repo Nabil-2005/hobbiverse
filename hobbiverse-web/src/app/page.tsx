@@ -1,17 +1,13 @@
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+"use client";
+import Login from "@/components/Login";
+import SpotifyProfile from "@/components/profile/SpotifyProfile";
 
 export default function Home() {
-  return (
-    <div className="flex flex-col gap-5 mt-10">
-      <h1 className="flex items-center justify-center text-4xl font-bold">
-        Welcome to Hobbiverse!
-      </h1>
-      <div className="flex items-center justify-center">
-        <Button>
-          <Link href={}>Login to Spotify</Link>
-        </Button>
-      </div>
-    </div>
-  );
+  const accessToken = localStorage.getItem("access_token");
+  console.log(accessToken);
+
+  if (accessToken) {
+    return <SpotifyProfile accessToken={accessToken} />;
+  }
+  return <Login />;
 }

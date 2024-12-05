@@ -11,18 +11,3 @@ function NotFoundPage() {
 }
 
 export default NotFoundPage;
-
-// <div className="w-full mt-16 flex justify-center items-center flex-col gap-y-10">
-// <h2 className="text-text font-semibold [font-size:30px]">
-//   Oops! Page not found.
-// </h2>
-// <p className="text-text-secondary text-lg ">
-//   We can&apos;t seem to find the page you&apos;re looking for.
-// </p>
-// <Link
-//   href="/"
-//   className="p-2 border border-primary border-solid text-primary rounded"
-// >
-//   Return Home
-// </Link>
-// </div>
