@@ -3,21 +3,17 @@ import { fetchProfile } from "@/utils/api/spotify";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
-type SpotifyProfileProps = {
-  accessToken: string | null;
-};
-
-const SpotifyProfile: React.FC<SpotifyProfileProps> = ({ accessToken }) => {
+const SpotifyProfile: React.FC = () => {
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
     const getProfile = async () => {
-      const profileData = await fetchProfile(accessToken!);
+      const profileData = await fetchProfile();
       setProfile(profileData);
       console.log(profileData);
     };
     getProfile();
-  }, [accessToken]);
+  }, []);
 
   const { display_name, email, href, id, uri, profileImage } =
     useProfile(profile);
@@ -29,7 +25,7 @@ const SpotifyProfile: React.FC<SpotifyProfileProps> = ({ accessToken }) => {
           Display your Spotify profile data
         </h1>
 
-        <section id="profile">
+        <section id="profile" className="items-center">
           <h2>
             Logged in as <span id="displayName">{display_name}</span>
           </h2>

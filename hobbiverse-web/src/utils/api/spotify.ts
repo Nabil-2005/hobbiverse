@@ -3,7 +3,7 @@ const redirectUri = process.env.NEXT_PUBLIC_REDIRECT_URI;
 const scope = "user-read-private user-read-email";
 const baseUrl = "https://accounts.spotify.com";
 const authUrl = new URL("/authorize", baseUrl);
-const tokenExchangeUrl = new URL("/api/token", baseUrl);
+const tokenUrl = new URL("/api/token", baseUrl);
 
 const generateRandomString = (length: number) => {
   const possible =
@@ -27,7 +27,6 @@ const base64encode = (input: ArrayBuffer) => {
 
 export const getToken = async (code: string | null) => {
   const codeVerifier = localStorage.getItem("code_verifier");
-  console.log("api fired");
 
   const payload = {
     method: "POST",
@@ -43,11 +42,57 @@ export const getToken = async (code: string | null) => {
     } as Record<string, string>),
   };
 
-  const body = await fetch(tokenExchangeUrl, payload);
+  const body = await fetch(tokenUrl, payload);
   const response = await body.json();
 
-  if (response.access_token !== undefined)
+  if (response.access_token !== undefined) {
     localStorage.setItem("access_token", response.access_token);
+    localStorage.setItem("refresh_token", response.refresh_token);
+    localStorage.setItem(
+      "token_expiry",
+      (new Date().getTime() + response.expires_in * 1000).toString()
+    );
+  }
+
+  window.history.pushState("", "", redirectUri);
+};
+
+export const getRefreshToken = async () => {
+  const refreshToken = localStorage.getItem("refresh_token");
+
+  const payload = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams({
+      grant_type: "refresh_token",
+      refresh_token: refreshToken,
+      client_id: clientId,
+    } as Record<string, string>),
+  };
+  const body = await fetch(tokenUrl, payload);
+  const response = await body.json();
+
+  localStorage.setItem("access_token", response.accessToken);
+  localStorage.setItem(
+    "token_expiry",
+    (new Date().getTime() + response.expires_in * 1000).toString()
+  );
+  if (response.refreshToken) {
+    localStorage.setItem("refresh_token", response.refreshToken);
+  }
+};
+
+export const isTokenValid = () => {
+  const expiryTime = parseInt(localStorage.getItem("token_expiry") || "0", 10);
+  return Date.now() < expiryTime;
+};
+
+export const ensureValidToken = async () => {
+  if (!isTokenValid()) {
+    await getRefreshToken();
+  }
 };
 
 export const LoginSpotify = async () => {
@@ -72,7 +117,10 @@ export const LoginSpotify = async () => {
   window.location.href = authUrl.toString();
 };
 
-export const fetchProfile = async (token: string) => {
+export const fetchProfile = async () => {
+  await ensureValidToken();
+  const token = localStorage.getItem("access_token");
+
   const result = await fetch("https://api.spotify.com/v1/me", {
     method: "GET",
     headers: { Authorization: `Bearer ${token}` },

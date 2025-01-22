@@ -1,14 +1,9 @@
 "use client";
 import React from "react";
 import { Button } from "./ui/button";
-import { LoginSpotify, getToken } from "@/utils/api/spotify";
+import { LoginSpotify } from "@/utils/api/spotify";
 
 const Login = () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const code = urlParams.get("code");
-
-  if (code) getToken(code);
-
   return (
     <div className="flex flex-col gap-5 mt-10">
       <div>
