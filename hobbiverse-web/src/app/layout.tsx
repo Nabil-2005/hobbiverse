@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import LayoutContentProvider from "@/context/LayoutContentContext";
+import AuthProvider from "@/context/AuthContext";
+import { Suspense } from "react";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -29,7 +31,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <LayoutContentProvider>{children}</LayoutContentProvider>
+        <Suspense fallback={<div>Loading...</div>}>
+          <AuthProvider>
+            <LayoutContentProvider>{children}</LayoutContentProvider>
+          </AuthProvider>
+        </Suspense>
       </body>
     </html>
   );

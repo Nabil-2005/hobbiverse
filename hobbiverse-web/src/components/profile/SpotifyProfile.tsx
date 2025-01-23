@@ -1,3 +1,4 @@
+"use client";
 import useProfile from "@/hooks/useProfile";
 import { fetchProfile } from "@/utils/api/spotify";
 import Image from "next/image";

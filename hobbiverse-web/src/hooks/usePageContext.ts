@@ -22,9 +22,37 @@ const usePageContext = () => {
     }
   };
 
+  const toLoginPage = ({ push = false, callback = pathname } = {}) => {
+    if (pathname.includes("/login")) return;
+    const loginPath = "/login";
+    const callbackPath = callback
+      ? `${loginPath}?callback=${callback}`
+      : loginPath;
+    if (push) {
+      router.push(callbackPath);
+    } else {
+      router.replace(callbackPath);
+    }
+  };
+
+  const toRegisterPage = ({ push = false, callback = pathname } = {}) => {
+    if (pathname.includes("/register")) return;
+    const registerPath = "/register";
+    const callbackPath = callback
+      ? `${registerPath}?callback=${callback}`
+      : registerPath;
+    if (push) {
+      router.push(callbackPath);
+    } else {
+      router.replace(callbackPath);
+    }
+  };
+
   return {
     pageType,
     toHomePage,
+    toLoginPage,
+    toRegisterPage,
   };
 };
 
