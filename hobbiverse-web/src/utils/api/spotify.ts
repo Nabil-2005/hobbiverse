@@ -26,8 +26,6 @@ const base64encode = (input: ArrayBuffer) => {
 };
 
 export const getToken = async (code: string | null) => {
-  console.log("getToken running");
-
   const codeVerifier = localStorage.getItem("code_verifier");
 
   const payload = {
@@ -60,8 +58,6 @@ export const getToken = async (code: string | null) => {
 };
 
 export const getRefreshToken = async () => {
-  console.log("getRefreshToken running");
-
   const refreshToken = localStorage.getItem("refresh_token");
 
   const payload = {
@@ -100,8 +96,6 @@ export const ensureValidToken = async () => {
 };
 
 export const LoginSpotify = async () => {
-  console.log("LoginSpotify running");
-
   const codeVerifier = generateRandomString(64);
   const hashed = await sha256(codeVerifier);
   const codeChallenge = base64encode(hashed);

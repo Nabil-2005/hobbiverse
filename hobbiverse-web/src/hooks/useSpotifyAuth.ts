@@ -8,7 +8,6 @@ const useSpotifyAuth = () => {
 
   useEffect(() => {
     const exchangeCodeForToken = async () => {
-      console.log("exchangeCodeForToken is running");
       setLoading(true);
       const urlParams = new URLSearchParams(window.location.search);
       const code = urlParams.get("code");

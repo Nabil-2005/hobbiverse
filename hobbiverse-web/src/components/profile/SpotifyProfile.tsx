@@ -1,20 +1,24 @@
 "use client";
 import useProfile from "@/hooks/useProfile";
+import useSpotifyAuth from "@/hooks/useSpotifyAuth";
 import { fetchProfile } from "@/utils/api/spotify";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
 const SpotifyProfile: React.FC = () => {
+  const { accessToken } = useSpotifyAuth();
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
     const getProfile = async () => {
-      const profileData = await fetchProfile();
-      setProfile(profileData);
-      console.log(profileData);
+      if (accessToken) {
+        const profileData = await fetchProfile();
+        setProfile(profileData);
+        console.log(profileData);
+      }
     };
     getProfile();
-  }, []);
+  }, [accessToken]);
 
   const { display_name, email, href, id, uri, profileImage } =
     useProfile(profile);
