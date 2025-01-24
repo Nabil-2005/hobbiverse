@@ -1,30 +1,43 @@
-// @ts-nocheck
 "use client";
 import useSpotifyAuth from "@/hooks/useSpotifyAuth";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 
-const track = {
-  name: "Track Name",
+const track: Spotify.Track = {
   album: {
+    name: "Unknown Album",
+    uri: "spotify:album:unknown",
     images: [{ url: "/hobbiverse-web/src/assets/default-image.jpg" }],
   },
-  artists: [{ name: "Artist Name" }],
+  artists: [{ name: "Unknown Artist", uri: "spotify:artist:unknown", url: "" }],
+  duration_ms: 0,
+  id: null,
+  is_playable: false,
+  name: "Track Name",
+  uid: "unknown",
+  uri: "spotify:track:unknown",
+  media_type: "audio",
+  type: "track",
+  track_type: "audio",
+  linked_from: {
+    uri: null,
+    id: null,
+  },
 };
 
 const SpotifyWebPlayer = () => {
   const { accessToken } = useSpotifyAuth();
-  const [player, setPlayer] = useState(undefined);
+  const [player, setPlayer] = useState<Spotify.Player | undefined>(undefined);
 
   const [isPaused, setPaused] = useState(false);
   const [isActive, setActive] = useState(false);
-  const [currentTrack, setTrack] = useState(track);
+  const [currentTrack, setTrack] = useState<Spotify.Track>(track);
 
   useEffect(() => {
     if (!accessToken) return;
 
-    let playerInstance;
+    let playerInstance: Spotify.Player | undefined;
 
     const existingScript = document.querySelector(
       'script[src="https://sdk.scdn.co/spotify-player.js"]'
@@ -46,7 +59,7 @@ const SpotifyWebPlayer = () => {
         getOAuthToken: (cb) => {
           cb(accessToken);
         },
-        volume: 0.5,
+        volume: 1,
       });
 
       setPlayer(playerInstance);
@@ -65,8 +78,9 @@ const SpotifyWebPlayer = () => {
         setTrack(state.track_window.current_track);
         setPaused(state.paused);
 
-        playerInstance.getCurrentState().then((state) => {
+        playerInstance?.getCurrentState().then((state) => {
           setActive(!!state);
+          console.log("isActive: ", isActive);
         });
       });
 
@@ -78,7 +92,7 @@ const SpotifyWebPlayer = () => {
         playerInstance.disconnect();
       }
     };
-  }, [accessToken, player]);
+  }, [accessToken, player, isActive]);
 
   return (
     <>
@@ -107,7 +121,7 @@ const SpotifyWebPlayer = () => {
             <Button
               className="btn-spotify"
               onClick={() => {
-                player.previousTrack();
+                player?.previousTrack();
               }}
             >
               &lt;&lt;
@@ -116,7 +130,7 @@ const SpotifyWebPlayer = () => {
             <Button
               className="btn-spotify"
               onClick={() => {
-                player.togglePlay();
+                player?.togglePlay();
               }}
             >
               {isPaused ? "PLAY" : "PAUSE"}
@@ -125,7 +139,7 @@ const SpotifyWebPlayer = () => {
             <Button
               className="btn-spotify"
               onClick={() => {
-                player.nextTrack();
+                player?.nextTrack();
               }}
             >
               &gt;&gt;
