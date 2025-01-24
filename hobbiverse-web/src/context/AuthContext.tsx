@@ -36,9 +36,9 @@ export default function AuthProvider({ children }: AuthContextProps) {
   const [profile, setProfile] = useState<UserProfile | null>(null);
 
   const fetchProfile = useCallback(() => {
-    console.log("fetchProfile function here");
     const data = dummyUser;
     setProfile(data);
+    console.log(data);
   }, []);
 
   const signUp = useCallback(() => {

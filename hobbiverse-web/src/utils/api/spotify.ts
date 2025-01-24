@@ -1,6 +1,7 @@
 const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
 const redirectUri = process.env.NEXT_PUBLIC_REDIRECT_URI;
-const scope = "user-read-private user-read-email";
+const scope =
+  "user-read-private user-read-email user-read-playback-state user-modify-playback-state user-read-currently-playing streaming playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public user-follow-modify user-follow-read user-top-read user-read-recently-played user-library-modify user-library-read";
 const baseUrl = "https://accounts.spotify.com";
 const authUrl = new URL("/authorize", baseUrl);
 const tokenUrl = new URL("/api/token", baseUrl);

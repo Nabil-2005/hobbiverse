@@ -1,5 +1,5 @@
 "use client";
-import useProfile from "@/hooks/useProfile";
+import useSpotifyProfile from "@/hooks/useSpotifyProfile";
 import useSpotifyAuth from "@/hooks/useSpotifyAuth";
 import { fetchProfile } from "@/utils/api/spotify";
 import Image from "next/image";
@@ -21,7 +21,7 @@ const SpotifyProfile: React.FC = () => {
   }, [accessToken]);
 
   const { display_name, email, href, id, uri, profileImage } =
-    useProfile(profile);
+    useSpotifyProfile(profile);
 
   return (
     <div className="flex flex-col gap-5 mt-10">

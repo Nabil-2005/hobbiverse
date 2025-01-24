@@ -30,7 +30,7 @@ interface SpotifyProfile {
   profileImage?: string;
 }
 
-const useProfile = (profile: SpotifyProfile | null) => {
+const useSpotifyProfile = (profile: SpotifyProfile | null) => {
   const country = profile?.country || "";
   const display_name = profile?.display_name || "";
   const email = profile?.email || "";
@@ -65,4 +65,4 @@ const useProfile = (profile: SpotifyProfile | null) => {
   };
 };
 
-export default useProfile;
+export default useSpotifyProfile;
