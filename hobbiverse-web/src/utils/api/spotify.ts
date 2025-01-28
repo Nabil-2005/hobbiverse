@@ -61,6 +61,11 @@ export const getToken = async (code: string | null) => {
 export const getRefreshToken = async () => {
   const refreshToken = localStorage.getItem("refresh_token");
 
+  if (!refreshToken) {
+    console.error("Refresh token missing");
+    return;
+  }
+
   const payload = {
     method: "POST",
     headers: {
@@ -75,13 +80,35 @@ export const getRefreshToken = async () => {
   const body = await fetch(tokenUrl, payload);
   const response = await body.json();
 
-  localStorage.setItem("access_token", response.accessToken);
-  localStorage.setItem(
-    "token_expiry",
-    (new Date().getTime() + response.expires_in * 1000).toString()
-  );
-  if (response.refreshToken) {
-    localStorage.setItem("refresh_token", response.refreshToken);
+  if (response.access_token) {
+    localStorage.setItem("access_token", response.access_token);
+    localStorage.setItem(
+      "token_expiry",
+      (Date.now() + response.expires_in * 1000).toString()
+    );
+    if (response.refresh_token) {
+      localStorage.setItem("refresh_token", response.refresh_token);
+    }
+  } else {
+    console.error("Failed to refresh token", response);
+  }
+};
+
+export const scheduleTokenRefresh = () => {
+  const expiryTime = parseInt(localStorage.getItem("token_expiry") || "0", 10);
+  const refreshTime = expiryTime - 5 * 60 * 1000; // Refresh 5 minutes before expiry
+  const delay = refreshTime - Date.now();  
+
+  if (delay > 0) {
+    setTimeout(async () => {
+      if (!isTokenValid()) {
+        console.log("Refresh token running");
+        // access token BQCBj2RaE4CcILYUdY2fvUU93lu1TF7lG8TkasfwximVUtCCllkcq-mxpDu-nYabo2s8NkYYFBOnZrOAmi-GYNjBw8wrgH9TTiayYzCZsN4F2JywZVhFGrmCCgaFd3wjCYXh5DvSp9hRTq_BXefXZfbmblmwslTvqSvP8YZ4kpdt1vfcCc1ZhdX1m8DL1IJziag0T9_RhREZSw_RwG79LtPBV2YELudnis6QroqEJ80iwRw1-hc5qT2uz8xSSc6Tom4gtcO1pteErWnFzrySKFCUDar2-pimUJHR7WxRGBZM1qg3oBzLmM2ErxZGHORxcBe6CNvXsz96rr-NHDpCqku_3A
+        // refresh token AQCZcnFgVsWAWKmHLHvGzS5sPokuytlIEPiqdQSov0hK00dz9AGP9IzoFeQKqUrkYn5bSQc4c5Umhkb9AXsRSAt8uqp2jNlvj8lWB3roEDS9EeF93gMXCahvU-NEdzIvSNRm0w
+        // 4:06pm
+        await getRefreshToken();
+      }
+    }, delay);
   }
 };
 
@@ -94,6 +121,7 @@ export const ensureValidToken = async () => {
   if (!isTokenValid()) {
     await getRefreshToken();
   }
+  scheduleTokenRefresh();
 };
 
 export const LoginSpotify = async () => {

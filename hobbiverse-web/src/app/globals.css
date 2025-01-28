@@ -2,13 +2,114 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  /* .text-balance {
+    text-wrap: balance;
+  }
+  .absolute-fill {
+    @apply absolute top-0 left-0 right-0 bottom-0;
+  } */
+}
+
+@layer components {
+  /* .font-large-title {
+    @apply font-inter font-medium;
+    font-size: 34px;
+    line-height: normal;
+  }
+
+  .font-title-1 {
+    @apply font-roboto font-semibold;
+    font-size: 24px;
+    line-height: normal;
+  }
+
+  .font-title-2 {
+    @apply font-roboto font-semibold text-xl;
+    line-height: 28px;
+  }
+
+  .font-title-3 {
+    @apply font-roboto font-semibold text-xl;
+    font-size: 20px;
+  }
+
+  .font-title-4 {
+    @apply font-roboto font-medium text-xl;
+  }
+
+  .font-headline {
+    @apply font-roboto font-semibold text-lg;
+  }
+
+  .font-monospaced-label {
+    @apply font-roboto font-medium text-lg;
+  } */
+
+  .font-body-medium,
+  .font-body {
+    @apply font-roboto font-medium text-md;
+  }
+
+  /* .font-button-label {
+    @apply font-roboto font-semibold text-md;
+  }
+
+  .font-callout {
+    @apply font-roboto font-medium text-md;
+  }
+
+  .font-subheadline-bold {
+    @apply !font-roboto !font-bold !text-base;
+  }
+
+  .font-subheadline-medium {
+    @apply font-roboto font-semibold text-base;
+  }
+
+  .font-subheadline {
+    @apply font-roboto font-medium text-base;
+  }
+
+  .font-footnote-bold {
+    @apply font-roboto font-bold text-sm;
+  }
+
+  .font-footnote-semibold {
+    @apply font-roboto font-semibold text-sm;
+  }
+
+  .font-footnote-medium {
+    @apply font-roboto font-medium text-sm;
+  }
+
+  .font-caption-semibold {
+    @apply font-roboto font-semibold text-sm;
+  }
+
+  .font-caption {
+    @apply font-roboto font-medium text-xs;
+  }
+
+  .font-navigation-label {
+    @apply font-roboto font-semibold text-xxs;
+  } */
 }
 
 @layer base {
+  body {
+    @apply text-base;
+    @apply font-roboto;
+    @apply text-text;
+    background: var(--background-gradient);
+  }
   :root {
     --background: 0 0% 100%;
+    --background-gradient: linear-gradient(180deg, #e1e5eb 0%, #e1e5eb 100%);
+    --background-music: linear-gradient(180deg, #4caf50 0%, #f4f4f4 100%);
+    --background-games: linear-gradient(180deg, #3a86ff 0%, #f4f4f4 100%);
+    --background-animanga: linear-gradient(180deg, #f44336 0%, #f4f4f4 100%);
+    --background-home: linear-gradient(180deg, #9c27b0 0%, #f4f4f4 100%);
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
@@ -33,7 +134,7 @@ body {
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
-    --sidebar-background: 0 0% 98%;
+    --sidebar-background: "transparent";
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
     --sidebar-primary-foreground: 0 0% 98%;

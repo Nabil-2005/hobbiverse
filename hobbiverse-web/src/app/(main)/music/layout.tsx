@@ -1,6 +1,7 @@
 import { AppSidebar } from "@/components/common/AppSidebar";
+import Logo from "@/components/common/Logo";
 import MusicLayoutChildren from "@/components/layout/MusicLayoutChildren";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import SpotifyAuthProvider from "@/context/SpotifyAuthContext";
 import { ReactNode } from "react";
 
@@ -11,9 +12,17 @@ interface MusicLayoutProps {
 export default function MusicLayout({ children }: MusicLayoutProps) {
   return (
     <SpotifyAuthProvider>
-      <SidebarProvider>
+      <SidebarProvider className="h-screen">
         <AppSidebar />
-        <MusicLayoutChildren>{children}</MusicLayoutChildren>
+        <main className="bg-music-bg mr-5 my-5 border-[0.5px] border-music-primary w-full rounded-2xl">
+          <div className="flex flex-row items-center justify-between h-16 px-6 border-b md:hidden">
+            <Logo />
+            <SidebarTrigger />
+          </div>
+          <div className="h-[calc(100%-64px)] pt-4">
+            <MusicLayoutChildren>{children}</MusicLayoutChildren>
+          </div>
+        </main>
       </SidebarProvider>
     </SpotifyAuthProvider>
   );

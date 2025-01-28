@@ -25,6 +25,24 @@ const useSpotifyAuth = () => {
     exchangeCodeForToken();
   }, []);
 
+  useEffect(() => {
+    const updateAccessToken = () => {
+      const token = localStorage.getItem("access_token");
+      setAccessToken(token);
+    };
+
+    updateAccessToken();
+
+    const handleStorageChange = () => {
+      updateAccessToken();
+    };
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
   return { accessToken, loading };
 };
 

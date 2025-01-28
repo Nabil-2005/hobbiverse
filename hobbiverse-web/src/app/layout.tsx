@@ -5,16 +5,28 @@ import LayoutContentProvider from "@/context/LayoutContentContext";
 import AuthProvider from "@/context/AuthContext";
 import { Suspense } from "react";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
+const inter = localFont({
+  src: "./fonts/InterVariable.ttf",
+  variable: "--font-inter",
+  weight: "400 700",
 });
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+const roboto = localFont({
+  src: "./fonts/RobotoVariable.ttf",
+  variable: "--font-roboto",
+  weight: "400 700",
 });
+
+// const satoshi = localFont({
+//   src: "./fonts/SatoshiVariable.ttf",
+//   variable: "--font-satoshi",
+//   weight: "400 700",
+// });
+
+// const sentient = localFont({
+//   src: "./fonts/SentientVariable.ttf",
+//   variable: "--font-sentient",
+//   weight: "400 700",
+// });
 
 export const metadata: Metadata = {
   title: "Hobbiverse",
@@ -28,12 +40,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${inter.variable} ${roboto.variable} antialiased`}>
         <Suspense fallback={<div>Loading...</div>}>
           <AuthProvider>
-            <LayoutContentProvider>{children}</LayoutContentProvider>
+            <main className="relative w-full h-screen">
+              <LayoutContentProvider>{children}</LayoutContentProvider>
+            </main>
           </AuthProvider>
         </Suspense>
       </body>
