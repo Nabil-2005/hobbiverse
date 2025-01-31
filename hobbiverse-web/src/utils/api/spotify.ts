@@ -97,15 +97,12 @@ export const getRefreshToken = async () => {
 export const scheduleTokenRefresh = () => {
   const expiryTime = parseInt(localStorage.getItem("token_expiry") || "0", 10);
   const refreshTime = expiryTime - 5 * 60 * 1000; // Refresh 5 minutes before expiry
-  const delay = refreshTime - Date.now();  
+  const delay = refreshTime - Date.now();
 
   if (delay > 0) {
     setTimeout(async () => {
       if (!isTokenValid()) {
         console.log("Refresh token running");
-        // access token BQCBj2RaE4CcILYUdY2fvUU93lu1TF7lG8TkasfwximVUtCCllkcq-mxpDu-nYabo2s8NkYYFBOnZrOAmi-GYNjBw8wrgH9TTiayYzCZsN4F2JywZVhFGrmCCgaFd3wjCYXh5DvSp9hRTq_BXefXZfbmblmwslTvqSvP8YZ4kpdt1vfcCc1ZhdX1m8DL1IJziag0T9_RhREZSw_RwG79LtPBV2YELudnis6QroqEJ80iwRw1-hc5qT2uz8xSSc6Tom4gtcO1pteErWnFzrySKFCUDar2-pimUJHR7WxRGBZM1qg3oBzLmM2ErxZGHORxcBe6CNvXsz96rr-NHDpCqku_3A
-        // refresh token AQCZcnFgVsWAWKmHLHvGzS5sPokuytlIEPiqdQSov0hK00dz9AGP9IzoFeQKqUrkYn5bSQc4c5Umhkb9AXsRSAt8uqp2jNlvj8lWB3roEDS9EeF93gMXCahvU-NEdzIvSNRm0w
-        // 4:06pm
         await getRefreshToken();
       }
     }, delay);
@@ -151,6 +148,18 @@ export const fetchProfile = async () => {
   const token = localStorage.getItem("access_token");
 
   const result = await fetch("https://api.spotify.com/v1/me", {
+    method: "GET",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  return await result.json();
+};
+
+export const fetchQueue = async () => {
+  await ensureValidToken();
+  const token = localStorage.getItem("access_token");
+
+  const result = await fetch("https://api.spotify.com/v1/me/player/queue", {
     method: "GET",
     headers: { Authorization: `Bearer ${token}` },
   });
