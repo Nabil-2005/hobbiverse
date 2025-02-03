@@ -1,69 +1,100 @@
-interface ExplicitContent {
-    filter_enabled: boolean;
-    filter_locked: boolean;
-  }
-  interface ExternalUrls {
-    spotify: string;
-  }
-  interface Followers {
-    href: string | null;
-    total: number;
-  }
-  interface Image {
-    height: number;
-    url: string;
-    width: number;
-  }
-  interface SpotifyProfile {
-    country?: string;
-    display_name?: string;
-    email?: string;
-    explicit_content?: ExplicitContent;
-    external_urls?: ExternalUrls;
-    followers?: Followers;
-    href?: string;
-    id?: string;
-    images?: Image[];
-    product?: string;
-    type?: string;
-    uri?: string;
-    profileImage?: string;
-  }
-  
-  const useSpotifyQueue = (profile: SpotifyProfile | null) => {
-    const country = profile?.country || "";
-    const display_name = profile?.display_name || "";
-    const email = profile?.email || "";
-    const explicit_content = profile?.explicit_content || {
-      filter_enabled: false,
-      filter_locked: false,
-    };
-    const external_urls = profile?.external_urls || { spotify: "" };
-    const followers = profile?.followers || { href: null, total: 0 };
-    const href = profile?.href || "";
-    const id = profile?.id || null;
-    const images = profile?.images || [];
-    const product = profile?.product || null;
-    const type = profile?.type || "user";
-    const uri = profile?.uri || "";
-    const profileImage = images[0]?.url || null;
-  
-    return {
-      country,
-      display_name,
-      email,
-      explicit_content,
-      external_urls,
-      followers,
-      href,
-      id,
-      images,
-      product,
-      type,
-      uri,
-      profileImage,
-    };
+interface ExternalUrls {
+  spotify: string;
+}
+
+interface Restrictions {
+  reason: string;
+}
+
+interface Image {
+  url: string;
+  height: number;
+  width: number;
+}
+
+interface Artist {
+  external_urls: ExternalUrls;
+  href: string;
+  id: string;
+  name: string;
+  type: "artist";
+  uri: string;
+}
+
+interface Album {
+  album_type: string;
+  total_tracks: number;
+  available_markets: string[];
+  external_urls: ExternalUrls;
+  href: string;
+  id: string;
+  images: Image[];
+  name: string;
+  release_date: string;
+  release_date_precision: string;
+  restrictions?: Restrictions;
+  type: "album";
+  uri: string;
+  artists: Artist[];
+}
+
+interface Track {
+  album: Album;
+  artists: Artist[];
+  available_markets: string[];
+  disc_number: number;
+  duration_ms: number;
+  explicit: boolean;
+  external_ids: {
+    isrc: string;
+    ean: string;
+    upc: string;
   };
-  
-  export default useSpotifyQueue;
-  
+  external_urls: ExternalUrls;
+  href: string;
+  id: string;
+  is_playable: boolean;
+  linked_from?: object;
+  restrictions?: Restrictions;
+  name: string;
+  popularity: number;
+  preview_url: string | null;
+  track_number: number;
+  type: "track";
+  uri: string;
+  is_local: boolean;
+}
+
+interface SpotifyQueue {
+  currently_playing: Track;
+  queue: Track[];
+}
+
+const useSpotifyQueue = (queue: SpotifyQueue | null) => {
+  const current_name = queue?.currently_playing?.name || "";
+  const current_album_name = queue?.currently_playing?.album.name || "";
+  const current_album_cover =
+    queue?.currently_playing?.album.images[0]?.url || null;
+  const current_artist = queue?.currently_playing?.artists[0]?.name || "";
+
+  const queue_tracks = queue?.queue || [];
+
+  const queue_name = queue?.queue[0]?.name || "";
+  const queue_album_name = queue?.queue[0]?.album.name || "";
+  const queue_album_cover = queue?.queue[0]?.album.images[0]?.url || null;
+  const queue_artist = queue?.queue[0]?.artists[0]?.name || "";
+
+  return {
+    current_name,
+    current_album_name,
+    current_album_cover,
+    current_artist,
+    queue_tracks,
+    queue_name,
+    queue_album_name,
+    queue_album_cover,
+    queue_artist,
+  };
+};
+
+export default useSpotifyQueue;
