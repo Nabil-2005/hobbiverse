@@ -42,7 +42,14 @@ export const SpotifyPlayerContext = createContext<{
   currentTrack: Spotify.Track;
   nextTrack: Spotify.Track;
   setPaused: React.Dispatch<React.SetStateAction<boolean>>;
-} | null>(null);
+}>({
+  player: undefined,
+  isPaused: false,
+  isActive: false,
+  currentTrack: defaultTrack,
+  nextTrack: defaultTrack,
+  setPaused: () => {},
+});
 
 export default function SpotifyPlayerProvider({
   children,
