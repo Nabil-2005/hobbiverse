@@ -166,3 +166,32 @@ export const fetchQueue = async () => {
 
   return await result.json();
 };
+
+export const fetchLibrary = async () => {
+  await ensureValidToken();
+  const token = localStorage.getItem("access_token");
+
+  const result = await fetch("https://api.spotify.com/v1/me/playlists", {
+    method: "GET",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  return await result.json();
+};
+
+export const fetchPlaylist = async (
+  playlistId: string | string[] | undefined
+) => {
+  await ensureValidToken();
+  const token = localStorage.getItem("access_token");
+
+  const result = await fetch(
+    `https://api.spotify.com/v1/playlists/${playlistId}`,
+    {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+
+  return await result.json();
+};

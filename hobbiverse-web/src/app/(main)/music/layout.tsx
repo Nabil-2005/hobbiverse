@@ -14,9 +14,9 @@ export default function MusicLayout({ children }: MusicLayoutProps) {
   return (
     <SpotifyAuthProvider>
       <SpotifyPlayerProvider>
-        <SidebarProvider className="h-screen">
+        <SidebarProvider className="p-0 overflow-hidden w-full h-screen">
           <AppSidebar />
-          <main className="bg-music-bg mr-5 my-5 border-[0.5px] border-music-primary w-full rounded-2xl">
+          <main className="relative w-full bg-music-bg mr-5 my-5 border-[0.5px] border-music-primary rounded-2xl overflow-y-hidden">
             <div className="flex flex-row items-center justify-between h-16 px-6 border-b md:hidden">
               <Logo />
               <SidebarTrigger />

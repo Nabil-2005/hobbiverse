@@ -8,8 +8,6 @@ interface LoginProps {
 }
 
 const Login = ({ page }: LoginProps) => {
-  console.log("page: ", page);
-
   return (
     <div className="flex flex-col gap-5 mt-10">
       <div>

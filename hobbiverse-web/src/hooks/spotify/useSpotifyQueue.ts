@@ -70,6 +70,7 @@ interface SpotifyQueue {
   queue: Track[];
 }
 
+// Get the User's Queue
 const useSpotifyQueue = (queue: SpotifyQueue | null) => {
   const current_name = queue?.currently_playing?.name || "";
   const current_album_name = queue?.currently_playing?.album.name || "";

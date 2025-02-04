@@ -30,6 +30,7 @@ interface SpotifyProfile {
   profileImage?: string;
 }
 
+// Get Current User's Profile
 const useSpotifyProfile = (profile: SpotifyProfile | null) => {
   const country = profile?.country || "";
   const display_name = profile?.display_name || "";

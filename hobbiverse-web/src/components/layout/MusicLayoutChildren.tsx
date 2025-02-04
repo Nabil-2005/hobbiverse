@@ -1,5 +1,5 @@
 "use client";
-import useSpotifyAuth from "@/hooks/useSpotifyAuth";
+import useSpotifyAuth from "@/hooks/spotify/useSpotifyAuth";
 import { usePathname, useRouter } from "next/navigation";
 import { ReactNode, useCallback, useEffect, useState } from "react";
 

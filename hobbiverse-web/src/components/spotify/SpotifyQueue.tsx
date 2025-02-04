@@ -1,7 +1,7 @@
 "use client";
 import { useSpotifyPlayer } from "@/context/spotify/SpotifyPlayerContext";
-import useSpotifyAuth from "@/hooks/useSpotifyAuth";
-import useSpotifyQueue from "@/hooks/useSpotifyQueue";
+import useSpotifyAuth from "@/hooks/spotify/useSpotifyAuth";
+import useSpotifyQueue from "@/hooks/spotify/useSpotifyQueue";
 import { fetchQueue } from "@/utils/api/spotify";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -12,13 +12,10 @@ const SpotifyQueue = () => {
   const [queue, setQueue] = useState(null);
 
   useEffect(() => {
-    console.log("queue use effect runs");
-
     const getQueue = async () => {
       if (accessToken) {
         const queueData = await fetchQueue();
         setQueue(queueData);
-        console.log(queueData);
       }
     };
 
@@ -42,7 +39,7 @@ const SpotifyQueue = () => {
                       src={track.album?.images[0]?.url}
                       width={100}
                       height={100}
-                      alt={`${queue_tracks[0]?.name}'s profile image`}
+                      alt={`${queue_tracks[0]?.name}'s album cover`}
                     />
                   ) : (
                     <div>

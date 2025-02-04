@@ -1,5 +1,5 @@
 "use client";
-import useSpotifyAuth from "@/hooks/useSpotifyAuth";
+import useSpotifyAuth from "@/hooks/spotify/useSpotifyAuth";
 import {
   createContext,
   ReactNode,
@@ -82,7 +82,7 @@ export default function SpotifyPlayerProvider({
       if (player) return;
 
       playerInstance = new window.Spotify.Player({
-        name: "Web Playback SDK",
+        name: "Hobbiverse",
         getOAuthToken: (cb) => {
           cb(accessToken);
         },
