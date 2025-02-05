@@ -1,17 +1,45 @@
 "use client";
 import Image from "next/image";
-import React from "react";
 import { Button } from "../ui/button";
 import { useSpotifyPlayer } from "@/context/spotify/SpotifyPlayerContext";
+import useSpotifyAuth from "@/hooks/spotify/useSpotifyAuth";
+import { fetchAvailableDevices, transferPlayback } from "@/utils/api/spotify";
+import getSpotifyDevices from "@/hooks/spotify/useSpotifyDevice";
+import { Pause, Play, SkipBack, SkipForward } from "lucide-react";
 
 const SpotifyWebPlayer = () => {
+  const { accessToken } = useSpotifyAuth();
   const { player, isPaused, currentTrack } = useSpotifyPlayer();
+
+  const handleStreaming = async () => {
+    const availableDevices = await fetchAvailableDevices();
+
+    const { device } = getSpotifyDevices(availableDevices);
+
+    const hobbiverseDevice = device?.filter(
+      (attr) => attr.name === "Hobbiverse"
+    );
+
+    if (!hobbiverseDevice) {
+      console.log("no hobbiverse device found");
+      return;
+    }
+    const hobbiverseDeviceId = hobbiverseDevice[0]?.id;
+
+    if (accessToken) {
+      await transferPlayback(hobbiverseDeviceId);
+      player?.togglePlay();
+    }
+  };
 
   return (
     <>
       <div className="container">
+        <Button className="ml-4" onClick={() => handleStreaming()}>
+          Start streaming
+        </Button>
         <div className="main-wrapper flex flex-col items-center justify-center mt-10">
-          <div>
+          <div className="flex">
             <Image
               priority
               src={currentTrack.album.images[0]?.url}
@@ -37,7 +65,7 @@ const SpotifyWebPlayer = () => {
                 player?.previousTrack();
               }}
             >
-              &lt;&lt;
+              <SkipBack />
             </Button>
 
             <Button
@@ -46,7 +74,7 @@ const SpotifyWebPlayer = () => {
                 player?.togglePlay();
               }}
             >
-              {isPaused ? "PLAY" : "PAUSE"}
+              {isPaused ? <Play /> : <Pause />}
             </Button>
 
             <div>
@@ -56,7 +84,7 @@ const SpotifyWebPlayer = () => {
                   player?.nextTrack();
                 }}
               >
-                &gt;&gt;
+                <SkipForward />
               </Button>
             </div>
           </div>

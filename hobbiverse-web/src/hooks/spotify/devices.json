@@ -1,0 +1,14 @@
+{
+  "devices": [
+    {
+      "id": "23af966e3b05af573b2dcb33774dfc7c3df62b68",
+      "is_active": true,
+      "is_private_session": false,
+      "is_restricted": false,
+      "name": "Hobbiverse",
+      "supports_volume": true,
+      "type": "Computer",
+      "volume_percent": 100
+    }
+  ]
+}

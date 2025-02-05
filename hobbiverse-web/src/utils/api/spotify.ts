@@ -195,3 +195,45 @@ export const fetchPlaylist = async (
 
   return await result.json();
 };
+
+export const fetchAvailableDevices = async () => {
+  await ensureValidToken();
+  const token = localStorage.getItem("access_token");
+
+  const result = await fetch("https://api.spotify.com/v1/me/player/devices", {
+    method: "GET",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!result.ok) {
+    throw new Error(
+      `Fetch devices error: ${result.status} ${result.statusText}`
+    );
+  }
+
+  return await result.json();
+};
+
+export const transferPlayback = async (deviceId: string) => {
+  await ensureValidToken();
+  const token = localStorage.getItem("access_token");
+
+  const result = await fetch(`https://api.spotify.com/v1/me/player`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      device_ids: [deviceId],
+    }),
+  });
+
+  if (!result.ok) {
+    throw new Error(
+      `Transfer playback error: ${result.status} ${result.statusText}`
+    );
+  }
+
+  return true;
+};
