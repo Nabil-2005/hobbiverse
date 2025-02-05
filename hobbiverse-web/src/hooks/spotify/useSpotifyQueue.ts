@@ -38,7 +38,7 @@ interface Album {
   artists: Artist[];
 }
 
-interface Track {
+export interface Track {
   album: Album;
   artists: Artist[];
   available_markets: string[];

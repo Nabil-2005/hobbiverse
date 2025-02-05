@@ -5,6 +5,7 @@ import { fetchPlaylist } from "@/utils/api/spotify";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import moment from "moment";
 
 const SpotifyPlaylist = () => {
   const params = useParams();
@@ -76,10 +77,12 @@ const SpotifyPlaylist = () => {
                   <div className="flex flex-col justify-center gap-1">
                     <span>{track.track.name}</span>
                     <span>{track.track.artists[0]?.name}</span>
-                    <span>{track.track.album.name}</span>
+                    <span>{track.track.album?.name}</span>
                   </div>
                   <div>
-                    <span>{track.track.duration_ms}</span>
+                    <span>
+                      {moment.utc(track.track.duration_ms).format("m:ss")}
+                    </span>
                   </div>
                 </div>
               </div>

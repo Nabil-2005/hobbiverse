@@ -196,6 +196,18 @@ export const fetchPlaylist = async (
   return await result.json();
 };
 
+export const fetchAlbum = async (albumId: string | string[] | undefined) => {
+  await ensureValidToken();
+  const token = localStorage.getItem("access_token");
+
+  const result = await fetch(`https://api.spotify.com/v1/albums/${albumId}`, {
+    method: "GET",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  return await result.json();
+};
+
 export const fetchAvailableDevices = async () => {
   await ensureValidToken();
   const token = localStorage.getItem("access_token");
@@ -232,6 +244,38 @@ export const transferPlayback = async (deviceId: string) => {
   if (!result.ok) {
     throw new Error(
       `Transfer playback error: ${result.status} ${result.statusText}`
+    );
+  }
+
+  return true;
+};
+
+export const startPlayback = async (
+  contextUri: string,
+  offsetPosition: number,
+  positionMs: number
+) => {
+  await ensureValidToken();
+  const token = localStorage.getItem("access_token");
+
+  const result = await fetch(`https://api.spotify.com/v1/me/player/play`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      context_uri: contextUri,
+      offset: {
+        position: offsetPosition,
+      },
+      position_ms: positionMs,
+    }),
+  });
+
+  if (!result.ok) {
+    throw new Error(
+      `Start/resume playback error: ${result.status} ${result.statusText}`
     );
   }
 

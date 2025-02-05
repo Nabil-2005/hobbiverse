@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 import { useSpotifyPlayer } from "@/context/spotify/SpotifyPlayerContext";
 import useSpotifyAuth from "@/hooks/spotify/useSpotifyAuth";
 import { fetchAvailableDevices, transferPlayback } from "@/utils/api/spotify";
-import getSpotifyDevices from "@/hooks/spotify/useSpotifyDevice";
+import getSpotifyDevices from "@/hooks/spotify/getSpotifyDevice";
 import { Pause, Play, SkipBack, SkipForward } from "lucide-react";
 
 const SpotifyWebPlayer = () => {
@@ -35,19 +35,24 @@ const SpotifyWebPlayer = () => {
   return (
     <>
       <div className="container">
-        <Button className="ml-4" onClick={() => handleStreaming()}>
-          Start streaming
-        </Button>
-        <div className="main-wrapper flex flex-col items-center justify-center mt-10">
-          <div className="flex">
-            <Image
-              priority
-              src={currentTrack.album.images[0]?.url}
-              className="now-playing__cover rounded-lg border-black border-2"
-              alt="Album Cover"
-              width={400}
-              height={400}
-            />
+        <div className="main-wrapper flex flex-col items-center justify-center">
+          <div className="w-full">
+            <Button
+              className="items-start ml-4"
+              onClick={() => handleStreaming()}
+            >
+              Start streaming
+            </Button>
+            <div className="flex w-full justify-center">
+              <Image
+                priority
+                src={currentTrack.album.images[0]?.url}
+                className="now-playing__cover rounded-lg border-black border-2"
+                alt="Album Cover"
+                width={400}
+                height={400}
+              />
+            </div>
           </div>
 
           <div className="now-playing__side flex flex-col items-center my-2 text-lg font-bold">
