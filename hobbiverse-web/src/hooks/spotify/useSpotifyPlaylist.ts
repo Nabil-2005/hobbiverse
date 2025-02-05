@@ -119,6 +119,7 @@ export interface Restrictions {
 // Get Playlist
 const useSpotifyPlaylist = (playlist: Playlist | null) => {
   const playlist_id = playlist?.id || "";
+  const playlist_uri = playlist?.uri || "";
   const playlist_name = playlist?.name || "";
   const playlist_owner = playlist?.owner.display_name || "";
   const playlist_image = playlist?.images[0]?.url || null;
@@ -134,6 +135,7 @@ const useSpotifyPlaylist = (playlist: Playlist | null) => {
 
   return {
     playlist_id,
+    playlist_uri,
     playlist_name,
     playlist_owner,
     playlist_image,
