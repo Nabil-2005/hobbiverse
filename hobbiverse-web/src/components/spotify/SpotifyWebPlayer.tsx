@@ -6,9 +6,9 @@ import {
   fetchAvailableDevices,
   transferPlayback,
 } from "@/utils/api/spotify/spotify";
-import getSpotifyDevices from "@/hooks/spotify/getSpotifyDevice";
 import { Pause, Play, SkipBack, SkipForward } from "lucide-react";
 import { useEffect } from "react";
+import getAvailableDevices from "@/utils/api/spotify/player/getAvailableDevices";
 
 const SpotifyWebPlayer = () => {
   const {
@@ -22,8 +22,8 @@ const SpotifyWebPlayer = () => {
 
   const handleStreaming = async () => {
     const availableDevices = await fetchAvailableDevices();
-    const { device } = getSpotifyDevices(availableDevices);
-    const hobbiverseDevice = device?.filter(
+    const { devices_list } = getAvailableDevices(availableDevices);
+    const hobbiverseDevice = devices_list?.filter(
       (attr) => attr.name === "Hobbiverse"
     );
 
@@ -35,12 +35,9 @@ const SpotifyWebPlayer = () => {
 
     await transferPlayback(hobbiverseDeviceId);
     player?.togglePlay();
-    console.log("currently playing:", currentTrack.name);
   };
 
   useEffect(() => {
-    console.log("1 web player use effect run");
-
     player?.getCurrentState().then((state) => {
       if (!state) return;
       setTrack(state.track_window.current_track);
@@ -58,7 +55,7 @@ const SpotifyWebPlayer = () => {
               className="items-start ml-4"
               onClick={() => handleStreaming()}
             >
-              Stream in Hobbiverse
+              <p>Stream on Hobbiverse</p>
             </Button>
             <div className="flex w-full justify-center">
               <Image

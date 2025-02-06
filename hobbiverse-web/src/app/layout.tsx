@@ -4,6 +4,7 @@ import "./globals.css";
 import LayoutContentProvider from "@/context/LayoutContentContext";
 import AuthProvider from "@/context/AuthContext";
 import { Suspense } from "react";
+import SpotifyPlayerProvider from "@/context/spotify/SpotifyPlayerContext";
 
 const inter = localFont({
   src: "./fonts/InterVariable.ttf",
@@ -43,9 +44,11 @@ export default function RootLayout({
       <body className={`${inter.variable} ${roboto.variable} antialiased`}>
         <Suspense fallback={<div>Loading...</div>}>
           <AuthProvider>
-            <main className="relative w-full h-screen">
-              <LayoutContentProvider>{children}</LayoutContentProvider>
-            </main>
+            <SpotifyPlayerProvider>
+              <main className="relative w-full h-screen">
+                <LayoutContentProvider>{children}</LayoutContentProvider>
+              </main>
+            </SpotifyPlayerProvider>
           </AuthProvider>
         </Suspense>
       </body>

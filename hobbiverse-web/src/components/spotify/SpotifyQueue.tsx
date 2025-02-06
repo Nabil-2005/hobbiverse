@@ -1,7 +1,8 @@
 "use client";
 import { useSpotifyPlayer } from "@/context/spotify/SpotifyPlayerContext";
-import getSpotifyAlbum from "@/hooks/spotify/getSpotifyAlbum";
-import useSpotifyQueue, { Track } from "@/hooks/spotify/useSpotifyQueue";
+import { DetailedTrack } from "@/types/spotifytype";
+import getAlbum from "@/utils/api/spotify/albums/getAlbum";
+import getUserQueue from "@/utils/api/spotify/player/getUserQueue";
 import {
   fetchAlbum,
   fetchQueue,
@@ -17,11 +18,11 @@ const SpotifyQueue = () => {
   const [queue, setQueue] = useState(null);
 
   useEffect(() => {
-    const getQueue = async () => {
+    const fetchApi = async () => {
       const queueData = await fetchQueue();
       setQueue(queueData);
     };
-    getQueue();
+    fetchApi();
   }, [currentTrack]);
 
   useEffect(() => {
@@ -33,17 +34,16 @@ const SpotifyQueue = () => {
     });
   }, [player, setTrack, setNextTracks, setPrevTracks]);
 
-  const { queue_tracks } = useSpotifyQueue(queue);
+  const { queue_tracks_list } = getUserQueue(queue);
 
-  const handlePlayTrack = async (track: Track) => {
+  const handlePlayTrack = async (track: DetailedTrack) => {
     const trackId = track.id;
     const albumUri = track.album.uri;
     const albumId = albumUri.split("spotify:album:")[1];
 
     const album = await fetchAlbum(albumId);
-    const { albumTracks } = getSpotifyAlbum(album);
-
-    const matchTrack = albumTracks?.find((track) => track.id === trackId);
+    const { album_tracks_items } = getAlbum(album);
+    const matchTrack = album_tracks_items?.find((t) => t.id === trackId);
 
     if (matchTrack) {
       const offsetPosition = matchTrack?.track_number - 1;
@@ -59,8 +59,8 @@ const SpotifyQueue = () => {
     <div className="flex flex-col gap-3">
       <h1 className="pt-2 mx-10 text-xl font-bold">Spotify Queue</h1>
       <div className="mx-10 h-[35vh] overflow-y-auto">
-        {queue_tracks ? (
-          queue_tracks.map((track, index) => (
+        {queue_tracks_list ? (
+          queue_tracks_list.map((track, index) => (
             <section key={index} className="flex flex-col gap-2 mt-10">
               <div className="flex gap-5 text-md font-light">
                 <div>
@@ -79,7 +79,7 @@ const SpotifyQueue = () => {
                         src={track.album?.images[0]?.url}
                         width={110}
                         height={110}
-                        alt={`${queue_tracks[0]?.name}'s album cover`}
+                        alt={`${track.name}'s album cover`}
                       />
                     </div>
                   ) : (

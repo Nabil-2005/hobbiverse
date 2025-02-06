@@ -1,6 +1,6 @@
 "use client";
 import useSpotifyAuth from "@/hooks/spotify/useSpotifyAuth";
-import useSpotifyLibrary from "@/hooks/spotify/useSpotifyLibrary";
+import getUserPlaylists from "@/utils/api/spotify/playlists/getUserPlaylists";
 import { fetchLibrary } from "@/utils/api/spotify/spotify";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,22 +11,22 @@ const SpotifyLibrary = () => {
   const [library, setLibrary] = useState(null);
 
   useEffect(() => {
-    const getLibrary = async () => {
+    const fetchApi = async () => {
       if (accessToken) {
         const libraryData = await fetchLibrary();
         setLibrary(libraryData);
       }
     };
-    getLibrary();
+    fetchApi();
   }, [accessToken]);
 
-  const { playlists } = useSpotifyLibrary(library);
+  const { playlists_items } = getUserPlaylists(library);
 
   return (
     <div className="flex flex-col h-full gap-2 px-2 m-2">
       <h2 className="px-3 mt-4 pb-2 font-bold text-lg">Playlists Library</h2>
-      {playlists ? (
-        playlists.map((playlist, index) => (
+      {playlists_items ? (
+        playlists_items.map((playlist, index) => (
           <section key={index} className="flex flex-col my-2">
             <Link href={`/music/playlist/${playlist.id}`}>
               <div className="flex gap-2 text-md font-light">

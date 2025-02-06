@@ -1,8 +1,5 @@
 "use client";
 import useSpotifyAuth from "@/hooks/spotify/useSpotifyAuth";
-import useSpotifyPlaylist, {
-  PlaylistItem,
-} from "@/hooks/spotify/useSpotifyPlaylist";
 import { fetchPlaylist, startPlayback } from "@/utils/api/spotify/spotify";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -10,24 +7,24 @@ import React, { useEffect, useState } from "react";
 import moment from "moment";
 import { Play } from "lucide-react";
 import { useSpotifyPlayer } from "@/context/spotify/SpotifyPlayerContext";
+import getPlaylist from "@/utils/api/spotify/playlists/getPlaylist";
+import { PlaylistItem } from "@/types/spotifytype";
 
 const SpotifyPlaylist = () => {
   const params = useParams();
   const playlistId = params.id;
   const { accessToken } = useSpotifyAuth();
-  const { player, currentTrack, setTrack } = useSpotifyPlayer();
-  console.log("currentTrack", currentTrack);
-
+  const { player, setTrack, setNextTracks, setPrevTracks } = useSpotifyPlayer();
   const [playlist, setPlaylist] = useState(null);
 
   useEffect(() => {
-    const getPlaylist = async () => {
+    const fetchApi = async () => {
       if (accessToken) {
         const playlistData = await fetchPlaylist(playlistId);
         setPlaylist(playlistData);
       }
     };
-    getPlaylist();
+    fetchApi();
   }, [accessToken, playlistId]);
 
   const {
@@ -35,26 +32,26 @@ const SpotifyPlaylist = () => {
     playlist_uri,
     playlist_name,
     playlist_image,
-    playlist_owner,
-    tracks,
-  } = useSpotifyPlaylist(playlist);
+    playlist_owner_display_name,
+    tracks_items,
+  } = getPlaylist(playlist);
 
-  const handlePlayTrack = async (track: PlaylistItem) => {
-    const trackId = track.track.id;
-
-    const matchTrackIndex = tracks?.findIndex((t) => t.track.id === trackId);
-    console.log("matchTrackIndex", matchTrackIndex);
+  const handlePlayTrack = async (item: PlaylistItem) => {
+    const trackId = item.track.id;
+    const matchTrackIndex = tracks_items?.findIndex(
+      (t) => t.track.id === trackId
+    );
 
     if (typeof matchTrackIndex === "number") {
       const contextUri = playlist_uri;
       const offsetPosition = matchTrackIndex;
-      console.log("contextUri", contextUri);
-      console.log("offsetPosition", offsetPosition);
 
       await startPlayback(contextUri, offsetPosition, 0);
       player?.getCurrentState().then((state) => {
         if (!state) return;
-        setTrack(state?.track_window.current_track);
+        setTrack(state.track_window.current_track);
+        setNextTracks(state.track_window.next_tracks);
+        setPrevTracks(state.track_window.previous_tracks);
       });
     } else {
       console.log("playback error");
@@ -82,35 +79,35 @@ const SpotifyPlaylist = () => {
         </div>
         <div className="flex flex-col gap-6 justify-center">
           <span className="text-xl">{playlist_name}</span>
-          <span>{playlist_owner}</span>
+          <span>{playlist_owner_display_name}</span>
         </div>
       </div>
 
       <div className="mx-10 px-10 h-full">
         {playlist_id ? (
-          tracks?.map((track, index) => (
+          tracks_items?.map((item, index) => (
             <section
               key={index}
               className="flex flex-col gap-2 mt-3 py-3 border-b-2"
             >
               <div className="flex gap-5 text-base font-light">
                 <div>
-                  {track.track.album?.images[0]?.url ? (
+                  {item.track.album?.images[0]?.url ? (
                     <div className="relative group">
                       <button
                         title="play"
                         type="button"
                         className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-md"
-                        onClick={() => handlePlayTrack(track)}
+                        onClick={() => handlePlayTrack(item)}
                       >
                         <Play className="text-white w-10 h-10" />
                       </button>
                       <Image
                         className="rounded-md"
-                        src={track.track.album?.images[0]?.url}
+                        src={item.track.album?.images[0]?.url}
                         width={110}
                         height={110}
-                        alt={`${track.track.name}'s album cover`}
+                        alt={`${item.track.name}'s album cover`}
                       />
                     </div>
                   ) : (
@@ -121,13 +118,13 @@ const SpotifyPlaylist = () => {
                 </div>
                 <div className="flex flex-row w-full justify-between items-center px-4">
                   <div className="flex flex-col justify-center gap-1">
-                    <span>{track.track.name}</span>
-                    <span>{track.track.artists[0]?.name}</span>
-                    <span>{track.track.album?.name}</span>
+                    <span>{item.track.name}</span>
+                    <span>{item.track.artists[0]?.name}</span>
+                    <span>{item.track.album?.name}</span>
                   </div>
                   <div>
                     <span>
-                      {moment.utc(track.track.duration_ms).format("m:ss")}
+                      {moment.utc(item.track.duration_ms).format("m:ss")}
                     </span>
                   </div>
                 </div>

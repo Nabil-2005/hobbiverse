@@ -1,9 +1,9 @@
 "use client";
-import useSpotifyProfile from "@/hooks/spotify/useSpotifyProfile";
 import useSpotifyAuth from "@/hooks/spotify/useSpotifyAuth";
 import { fetchProfile } from "@/utils/api/spotify/spotify";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
+import getCurrentUserProfile from "@/utils/api/spotify/users/getCurrentUserProfile";
 
 const SpotifyProfile: React.FC = () => {
   const { accessToken } = useSpotifyAuth();
@@ -19,8 +19,8 @@ const SpotifyProfile: React.FC = () => {
     getProfile();
   }, [accessToken]);
 
-  const { display_name, email, href, id, uri, profileImage } =
-    useSpotifyProfile(profile);
+  const { display_name, email, href, id, profile_image, uri } =
+    getCurrentUserProfile(profile);
 
   return (
     <div>
@@ -32,10 +32,10 @@ const SpotifyProfile: React.FC = () => {
           <ul className="flex flex-col gap-5 text-md font-light">
             <li>
               Profile Image:
-              {profileImage ? (
+              {profile_image ? (
                 <Image
                   className="rounded-md"
-                  src={profileImage}
+                  src={profile_image}
                   width={200}
                   height={200}
                   alt={`${display_name}'s profile image`}
