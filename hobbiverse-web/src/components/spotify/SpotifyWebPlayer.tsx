@@ -2,35 +2,52 @@
 import Image from "next/image";
 import { Button } from "../ui/button";
 import { useSpotifyPlayer } from "@/context/spotify/SpotifyPlayerContext";
-import useSpotifyAuth from "@/hooks/spotify/useSpotifyAuth";
-import { fetchAvailableDevices, transferPlayback } from "@/utils/api/spotify";
+import {
+  fetchAvailableDevices,
+  transferPlayback,
+} from "@/utils/api/spotify/spotify";
 import getSpotifyDevices from "@/hooks/spotify/getSpotifyDevice";
 import { Pause, Play, SkipBack, SkipForward } from "lucide-react";
+import { useEffect } from "react";
 
 const SpotifyWebPlayer = () => {
-  const { accessToken } = useSpotifyAuth();
-  const { player, isPaused, currentTrack } = useSpotifyPlayer();
+  const {
+    player,
+    isPaused,
+    currentTrack,
+    setTrack,
+    setNextTracks,
+    setPrevTracks,
+  } = useSpotifyPlayer();
 
   const handleStreaming = async () => {
     const availableDevices = await fetchAvailableDevices();
-
     const { device } = getSpotifyDevices(availableDevices);
-
     const hobbiverseDevice = device?.filter(
       (attr) => attr.name === "Hobbiverse"
     );
 
     if (!hobbiverseDevice) {
-      console.log("no hobbiverse device found");
+      console.log("No Hobbiverse device found");
       return;
     }
     const hobbiverseDeviceId = hobbiverseDevice[0]?.id;
 
-    if (accessToken) {
-      await transferPlayback(hobbiverseDeviceId);
-      player?.togglePlay();
-    }
+    await transferPlayback(hobbiverseDeviceId);
+    player?.togglePlay();
+    console.log("currently playing:", currentTrack.name);
   };
+
+  useEffect(() => {
+    console.log("1 web player use effect run");
+
+    player?.getCurrentState().then((state) => {
+      if (!state) return;
+      setTrack(state.track_window.current_track);
+      setNextTracks(state.track_window.next_tracks);
+      setPrevTracks(state.track_window.previous_tracks);
+    });
+  }, [player, setTrack, setNextTracks, setPrevTracks]);
 
   return (
     <>
@@ -41,12 +58,12 @@ const SpotifyWebPlayer = () => {
               className="items-start ml-4"
               onClick={() => handleStreaming()}
             >
-              Start streaming
+              Stream in Hobbiverse
             </Button>
             <div className="flex w-full justify-center">
               <Image
                 priority
-                src={currentTrack.album.images[0]?.url}
+                src={currentTrack.album?.images[0]?.url}
                 className="now-playing__cover rounded-lg border-black border-2"
                 alt="Album Cover"
                 width={400}

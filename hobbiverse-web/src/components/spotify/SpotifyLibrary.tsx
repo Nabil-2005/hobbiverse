@@ -1,7 +1,7 @@
 "use client";
 import useSpotifyAuth from "@/hooks/spotify/useSpotifyAuth";
 import useSpotifyLibrary from "@/hooks/spotify/useSpotifyLibrary";
-import { fetchLibrary } from "@/utils/api/spotify";
+import { fetchLibrary } from "@/utils/api/spotify/spotify";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";

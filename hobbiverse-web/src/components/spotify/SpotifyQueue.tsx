@@ -1,35 +1,44 @@
 "use client";
 import { useSpotifyPlayer } from "@/context/spotify/SpotifyPlayerContext";
 import getSpotifyAlbum from "@/hooks/spotify/getSpotifyAlbum";
-import useSpotifyAuth from "@/hooks/spotify/useSpotifyAuth";
 import useSpotifyQueue, { Track } from "@/hooks/spotify/useSpotifyQueue";
-import { fetchAlbum, fetchQueue, startPlayback } from "@/utils/api/spotify";
+import {
+  fetchAlbum,
+  fetchQueue,
+  startPlayback,
+} from "@/utils/api/spotify/spotify";
 import { Play } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
 const SpotifyQueue = () => {
-  const { accessToken } = useSpotifyAuth();
-  const { currentTrack } = useSpotifyPlayer();
+  const { player, currentTrack, setTrack, setNextTracks, setPrevTracks } =
+    useSpotifyPlayer();
   const [queue, setQueue] = useState(null);
 
   useEffect(() => {
     const getQueue = async () => {
-      if (accessToken) {
-        const queueData = await fetchQueue();
-        setQueue(queueData);
-      }
+      const queueData = await fetchQueue();
+      setQueue(queueData);
     };
+    getQueue();
+  }, [currentTrack]);
 
-    if (currentTrack) getQueue();
-  }, [accessToken, currentTrack]);
+  useEffect(() => {
+    player?.getCurrentState().then((state) => {
+      if (!state) return;
+      setTrack(state.track_window.current_track);
+      setNextTracks(state.track_window.next_tracks);
+      setPrevTracks(state.track_window.previous_tracks);
+    });
+  }, [player, setTrack, setNextTracks, setPrevTracks]);
 
   const { queue_tracks } = useSpotifyQueue(queue);
 
   const handlePlayTrack = async (track: Track) => {
     const trackId = track.id;
-    const albumId = track.album.id;
     const albumUri = track.album.uri;
+    const albumId = albumUri.split("spotify:album:")[1];
 
     const album = await fetchAlbum(albumId);
     const { albumTracks } = getSpotifyAlbum(album);

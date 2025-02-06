@@ -226,6 +226,24 @@ export const fetchAvailableDevices = async () => {
   return await result.json();
 };
 
+export const fetchPlaybackState = async () => {
+  await ensureValidToken();
+  const token = localStorage.getItem("access_token");
+
+  const result = await fetch("https://api.spotify.com/v1/me/player", {
+    method: "GET",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!result.ok) {
+    throw new Error(
+      `Fetch playback state error: ${result.status} ${result.statusText}`
+    );
+  }
+
+  return await result.json();
+};
+
 export const transferPlayback = async (deviceId: string) => {
   await ensureValidToken();
   const token = localStorage.getItem("access_token");

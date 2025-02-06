@@ -1,5 +1,5 @@
 "use client";
-import { ensureValidToken, getToken } from "@/utils/api/spotify";
+import { ensureValidToken, getToken } from "@/utils/api/spotify/spotify";
 import { useEffect, useState } from "react";
 
 const useSpotifyAuth = () => {

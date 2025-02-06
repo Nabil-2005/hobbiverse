@@ -1,5 +1,5 @@
 "use client";
-import { ensureValidToken } from "@/utils/api/spotify";
+import { ensureValidToken } from "@/utils/api/spotify/spotify";
 import { createContext, ReactNode, useEffect, useMemo, useState } from "react";
 
 interface SpotifyAuthContextProps {

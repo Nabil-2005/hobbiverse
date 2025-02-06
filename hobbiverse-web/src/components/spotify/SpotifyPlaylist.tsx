@@ -3,17 +3,21 @@ import useSpotifyAuth from "@/hooks/spotify/useSpotifyAuth";
 import useSpotifyPlaylist, {
   PlaylistItem,
 } from "@/hooks/spotify/useSpotifyPlaylist";
-import { fetchPlaylist, startPlayback } from "@/utils/api/spotify";
+import { fetchPlaylist, startPlayback } from "@/utils/api/spotify/spotify";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import moment from "moment";
 import { Play } from "lucide-react";
+import { useSpotifyPlayer } from "@/context/spotify/SpotifyPlayerContext";
 
 const SpotifyPlaylist = () => {
   const params = useParams();
   const playlistId = params.id;
   const { accessToken } = useSpotifyAuth();
+  const { player, currentTrack, setTrack } = useSpotifyPlayer();
+  console.log("currentTrack", currentTrack);
+
   const [playlist, setPlaylist] = useState(null);
 
   useEffect(() => {
@@ -39,14 +43,19 @@ const SpotifyPlaylist = () => {
     const trackId = track.track.id;
 
     const matchTrackIndex = tracks?.findIndex((t) => t.track.id === trackId);
+    console.log("matchTrackIndex", matchTrackIndex);
 
-    if (matchTrackIndex) {
+    if (typeof matchTrackIndex === "number") {
       const contextUri = playlist_uri;
       const offsetPosition = matchTrackIndex;
       console.log("contextUri", contextUri);
       console.log("offsetPosition", offsetPosition);
 
       await startPlayback(contextUri, offsetPosition, 0);
+      player?.getCurrentState().then((state) => {
+        if (!state) return;
+        setTrack(state?.track_window.current_track);
+      });
     } else {
       console.log("playback error");
     }

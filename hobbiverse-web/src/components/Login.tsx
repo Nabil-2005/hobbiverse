@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { Button } from "./ui/button";
-import { LoginSpotify } from "@/utils/api/spotify";
+import { LoginSpotify } from "@/utils/api/spotify/spotify";
 
 interface LoginProps {
   page: string;

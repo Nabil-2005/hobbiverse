@@ -13,7 +13,7 @@ interface SpotifyPlayerContextProps {
   children: ReactNode;
 }
 
-const defaultTrack: Spotify.Track = {
+export const defaultTrack: Spotify.Track = {
   album: {
     name: "Unknown Album",
     uri: "spotify:album:unknown",
@@ -38,17 +38,27 @@ const defaultTrack: Spotify.Track = {
 export const SpotifyPlayerContext = createContext<{
   player: Spotify.Player | undefined;
   isPaused: boolean;
-  isActive: boolean;
-  currentTrack: Spotify.Track;
-  nextTrack: Spotify.Track;
   setPaused: React.Dispatch<React.SetStateAction<boolean>>;
+  isActive: boolean;
+  setActive: React.Dispatch<React.SetStateAction<boolean>>;
+  currentTrack: Spotify.Track;
+  setTrack: React.Dispatch<React.SetStateAction<Spotify.Track>>;
+  nextTracks: Spotify.Track[];
+  setNextTracks: React.Dispatch<React.SetStateAction<Spotify.Track[]>>;
+  prevTracks: Spotify.Track[];
+  setPrevTracks: React.Dispatch<React.SetStateAction<Spotify.Track[]>>;
 }>({
   player: undefined,
   isPaused: false,
-  isActive: false,
-  currentTrack: defaultTrack,
-  nextTrack: defaultTrack,
   setPaused: () => {},
+  isActive: false,
+  setActive: () => {},
+  currentTrack: defaultTrack,
+  setTrack: () => {},
+  nextTracks: [defaultTrack],
+  setNextTracks: () => {},
+  prevTracks: [defaultTrack],
+  setPrevTracks: () => {},
 });
 
 export default function SpotifyPlayerProvider({
@@ -59,7 +69,8 @@ export default function SpotifyPlayerProvider({
   const [isPaused, setPaused] = useState(false);
   const [isActive, setActive] = useState(false);
   const [currentTrack, setTrack] = useState<Spotify.Track>(defaultTrack);
-  const [nextTrack, setNextTrack] = useState<Spotify.Track>(defaultTrack);
+  const [nextTracks, setNextTracks] = useState<Spotify.Track[]>([defaultTrack]);
+  const [prevTracks, setPrevTracks] = useState<Spotify.Track[]>([defaultTrack]);
 
   useEffect(() => {
     if (!accessToken) return;
@@ -103,7 +114,8 @@ export default function SpotifyPlayerProvider({
         if (!state) return;
 
         setTrack(state.track_window.current_track);
-        setNextTrack(state.track_window.next_tracks[0] || defaultTrack);
+        setNextTracks(state.track_window.next_tracks);
+        setPrevTracks(state.track_window.previous_tracks);
         setPaused(state.paused);
 
         playerInstance?.getCurrentState().then((state) => {
@@ -113,9 +125,7 @@ export default function SpotifyPlayerProvider({
 
       playerInstance.connect().then((success) => {
         if (success) {
-          console.log(
-            "The Web Playback SDK successfully connected to Spotify!"
-          );
+          console.log("Hobbiverse successfully connected to Spotify!");
         }
       });
     };
@@ -131,12 +141,29 @@ export default function SpotifyPlayerProvider({
     () => ({
       player,
       isPaused,
-      isActive,
-      currentTrack,
-      nextTrack,
       setPaused,
+      isActive,
+      setActive,
+      currentTrack,
+      setTrack,
+      nextTracks,
+      setNextTracks,
+      prevTracks,
+      setPrevTracks,
     }),
-    [player, isPaused, isActive, currentTrack, nextTrack]
+    [
+      player,
+      isPaused,
+      setPaused,
+      isActive,
+      setActive,
+      currentTrack,
+      setTrack,
+      nextTracks,
+      setNextTracks,
+      prevTracks,
+      setPrevTracks,
+    ]
   );
 
   return (
